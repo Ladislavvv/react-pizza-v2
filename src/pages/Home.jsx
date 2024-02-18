@@ -24,10 +24,11 @@ function Home() {
       .catch((error) => {
         console.error('There has been a problem with your fetch operation:', error);
       });
+    window.scrollTo(0, 0);
   }, []);
 
   return (
-    <>
+    <div className="container">
       <div className="content__top">
         <Categories />
         <Sort />
@@ -38,7 +39,7 @@ function Home() {
           ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
           : items.map((item) => <PizzaBlock key={item.id} {...item} />)}
       </div>
-    </>
+    </div>
   );
 }
 

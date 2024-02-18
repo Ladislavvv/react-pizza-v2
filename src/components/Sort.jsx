@@ -13,7 +13,7 @@ function Sort() {
 
   return (
     <div className="sort">
-      <div className="sort__label">
+      <div className="sort__label" onClick={() => setOpen(!open)}>
         <svg
           width="10"
           height="6"
@@ -26,7 +26,7 @@ function Sort() {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setOpen(!open)}>{sortName}</span>
+        <span>{sortName}</span>
       </div>
       {open && (
         <div className="sort__popup">
