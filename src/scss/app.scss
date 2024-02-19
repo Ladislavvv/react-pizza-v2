@@ -35,8 +35,8 @@ body {
   &__items {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-	  column-gap: 15px;
-	  place-items: center;
+    column-gap: 15px;
+    place-items: center;
   }
 
   &__top {
