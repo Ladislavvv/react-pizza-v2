@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
 
-import { setCategoryId } from '../redux/slices/filterSlice';
+import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlcok';
@@ -11,15 +12,19 @@ import { SearchContext } from '../App';
 
 function Home() {
   const dispatch = useDispatch();
-  const { categoryId, sortType } = useSelector((state) => state.filter);
+  const { categoryId, sortType, currentPage } = useSelector((state) => state.filter);
 
   const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [currentPage, setCurrentPage] = React.useState(1);
+  // const [currentPage, setCurrentPage] = React.useState(1);
 
   const onChangeCategory = (id) => {
     dispatch(setCategoryId(id));
+  };
+
+  const onChangePage = (number) => {
+    dispatch(setCurrentPage(number));
   };
 
   React.useEffect(() => {
@@ -29,21 +34,16 @@ function Home() {
     const order = sortType.sortProperty.includes('-') ? 'asc' : 'desc';
     const category = categoryId > 0 ? `category=${categoryId}` : '';
 
-    fetch(
-      `https://65cd2149dd519126b8402996.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}`,
-    )
+    axios
+      .get(
+        `https://65cd2149dd519126b8402996.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}`,
+      )
       .then((res) => {
-        if (!res.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return res.json();
-      })
-      .then((arr) => {
-        setItems(arr);
+        setItems(res.data);
         setIsLoading(false);
       })
       .catch((error) => {
-        console.error('There has been a problem with your fetch operation:', error);
+        console.error('There has been a problem with your axios get operation:', error);
       });
 
     window.scrollTo(0, 0);
@@ -64,12 +64,11 @@ function Home() {
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onChangeCategory={onChangeCategory} />
-        {/* <Sort value={sortType} onChangeSort={onChangeSort} /> */}
         <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">{isLoading ? skeletons : pizzas}</div>
-      <Pagination onChangePage={(number) => setCurrentPage(number)} />
+      <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </div>
   );
 }
